@@ -1,4 +1,4 @@
-name: Publicar NURK 0.60
+name: Retirar NURK 0.60
 on:
   push:
     paths:
@@ -7,21 +7,11 @@ on:
 permissions:
   contents: write
 jobs:
-  publicar:
+  retirar:
     runs-on: ubuntu-latest
     steps:
-      - name: Verificar a versão pública e publicar o APK
+      - name: Remover a versão pública 0.60
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_COMMIT: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          curl --fail --location --retry 3 -o NURK-v60.zip https://nurk-download.chummyrowan1.chatgpt.site/NURK-v60.zip
-          echo '16b00a8efea3537cfedd1d4248bb82460e9969d458e256ea9c7922629113635d  NURK-v60.zip' | sha256sum -c
-          unzip -j NURK-v60.zip NURK-v60.apk
-          if gh release view v0.60 >/dev/null 2>&1; then
-            gh release upload v0.60 NURK-v60.apk
-          else
-            gh release create v0.60 NURK-v60.apk --target "$RELEASE_COMMIT" --title "NURK Assistente 0.60" --notes "APK Android assinado da versão pública 0.60."
-          fi
+        run: gh release delete v0.60 --yes
