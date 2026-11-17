@@ -1,0 +1,23 @@
+name: Publicar NURK 0.61
+on:
+  push:
+    paths:
+      - '.github/workflows/publicar-v61.yml'
+permissions:
+  contents: write
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar e publicar o APK oficial
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 -o NURK-v61.zip https://nurk-download.chummyrowan1.chatgpt.site/NURK-v61-transfer.zip
+          echo '28c717c63785feb5616ef67d420dac4afcf0139fcb566148519fd0e22e360294  NURK-v61.zip' | sha256sum -c
+          unzip -j NURK-v61.zip NURK-v61.apk
+          echo '9c01a58fcf814dc3283bfade42dcffee2c87a199894941d5697b05ab51f06aa4  NURK-v61.apk' | sha256sum -c
+          gh release create v0.61 NURK-v61.apk --target "$RELEASE_COMMIT" --title "NURK Assistente 0.61" --notes "Nova instalação Android. Inclui ativação guiada, filtro de R$ 3 a R$ 25 e consulta de atualizações no GitHub Pages."
